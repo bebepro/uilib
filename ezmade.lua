@@ -3,7 +3,7 @@ local UILibrary = {}
 -- Create the main UI (ScreenGui)
 function UILibrary.Load(libraryName)
     local ui = {}
-    
+
     -- Create the ScreenGui
     ui.ScreenGui = Instance.new("ScreenGui")
     ui.ScreenGui.Name = libraryName or "UILibrary"
@@ -99,6 +99,123 @@ function UILibrary.Load(libraryName)
             end)
 
             return button
+        end
+
+        -- Add a toggle
+        function page.AddToggle(toggleText, defaultValue, callback)
+            local toggleFrame = Instance.new("Frame")
+            toggleFrame.Size = UDim2.new(1, 0, 0, 40)
+            toggleFrame.BackgroundTransparency = 1
+            toggleFrame.Parent = page.Frame
+
+            local toggleLabel = Instance.new("TextLabel")
+            toggleLabel.Text = toggleText or "Toggle"
+            toggleLabel.Size = UDim2.new(0.8, 0, 1, 0)
+            toggleLabel.BackgroundTransparency = 1
+            toggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            toggleLabel.Font = Enum.Font.SourceSans
+            toggleLabel.TextSize = 20
+            toggleLabel.Parent = toggleFrame
+
+            local toggleButton = Instance.new("TextButton")
+            toggleButton.Text = defaultValue and "ON" or "OFF"
+            toggleButton.Size = UDim2.new(0.2, 0, 1, 0)
+            toggleButton.Position = UDim2.new(0.8, 0, 0, 0)
+            toggleButton.BackgroundColor3 = defaultValue and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+            toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            toggleButton.Font = Enum.Font.SourceSans
+            toggleButton.TextSize = 20
+            toggleButton.Parent = toggleFrame
+
+            local toggleValue = defaultValue
+
+            toggleButton.MouseButton1Click:Connect(function()
+                toggleValue = not toggleValue
+                toggleButton.Text = toggleValue and "ON" or "OFF"
+                toggleButton.BackgroundColor3 = toggleValue and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+
+                if callback then
+                    callback(toggleValue)
+                end
+            end)
+
+            return toggleFrame
+        end
+
+        -- Add a slider
+        function page.AddSlider(sliderText, options, callback)
+            local sliderFrame = Instance.new("Frame")
+            sliderFrame.Size = UDim2.new(1, 0, 0, 40)
+            sliderFrame.BackgroundTransparency = 1
+            sliderFrame.Parent = page.Frame
+
+            local sliderLabel = Instance.new("TextLabel")
+            sliderLabel.Text = sliderText or "Slider"
+            sliderLabel.Size = UDim2.new(0.8, 0, 1, 0)
+            sliderLabel.BackgroundTransparency = 1
+            sliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            sliderLabel.Font = Enum.Font.SourceSans
+            sliderLabel.TextSize = 20
+            sliderLabel.Parent = sliderFrame
+
+            local slider = Instance.new("TextButton")
+            slider.Size = UDim2.new(0.2, 0, 1, 0)
+            slider.Position = UDim2.new(0.8, 0, 0, 0)
+            slider.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+            slider.Text = tostring(options.Def or 0)
+            slider.TextColor3 = Color3.fromRGB(255, 255, 255)
+            slider.Font = Enum.Font.SourceSans
+            slider.TextSize = 20
+            slider.Parent = sliderFrame
+
+            slider.MouseButton1Click:Connect(function()
+                local newValue = math.random(options.Min or 0, options.Max or 100)
+                slider.Text = tostring(newValue)
+
+                if callback then
+                    callback(newValue)
+                end
+            end)
+
+            return sliderFrame
+        end
+
+        -- Add a dropdown
+        function page.AddDropdown(dropdownText, options, callback)
+            local dropdownFrame = Instance.new("Frame")
+            dropdownFrame.Size = UDim2.new(1, 0, 0, 40)
+            dropdownFrame.BackgroundTransparency = 1
+            dropdownFrame.Parent = page.Frame
+
+            local dropdownLabel = Instance.new("TextLabel")
+            dropdownLabel.Text = dropdownText or "Dropdown"
+            dropdownLabel.Size = UDim2.new(0.8, 0, 1, 0)
+            dropdownLabel.BackgroundTransparency = 1
+            dropdownLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            dropdownLabel.Font = Enum.Font.SourceSans
+            dropdownLabel.TextSize = 20
+            dropdownLabel.Parent = dropdownFrame
+
+            local dropdownButton = Instance.new("TextButton")
+            dropdownButton.Text = "Select"
+            dropdownButton.Size = UDim2.new(0.2, 0, 1, 0)
+            dropdownButton.Position = UDim2.new(0.8, 0, 0, 0)
+            dropdownButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+            dropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            dropdownButton.Font = Enum.Font.SourceSans
+            dropdownButton.TextSize = 20
+            dropdownButton.Parent = dropdownFrame
+
+            dropdownButton.MouseButton1Click:Connect(function()
+                local selectedOption = options[math.random(1, #options)]
+                dropdownButton.Text = selectedOption
+
+                if callback then
+                    callback(selectedOption)
+                end
+            end)
+
+            return dropdownFrame
         end
 
         -- Add the page to the library
