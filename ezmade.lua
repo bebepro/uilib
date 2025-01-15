@@ -3,7 +3,7 @@ local UILibrary = {}
 -- Create the main UI (ScreenGui)
 function UILibrary.Load(libraryName)
     local ui = {}
-    
+
     -- Create the ScreenGui
     ui.ScreenGui = Instance.new("ScreenGui")
     ui.ScreenGui.Name = libraryName or "UILibrary"
@@ -15,7 +15,7 @@ function UILibrary.Load(libraryName)
     -- Add a page
     function ui.AddPage(pageName)
         local page = {}
-        
+
         -- Create a frame for the page
         page.Frame = Instance.new("Frame")
         page.Frame.Name = pageName or "Page"
@@ -146,6 +146,71 @@ function UILibrary.Load(libraryName)
             end)
 
             return sliderFrame
+        end
+
+        -- Add a dropdown
+        function page.AddDropdown(dropdownText, options, callback)
+            local dropdownFrame = Instance.new("Frame")
+            dropdownFrame.Size = UDim2.new(1, 0, 0, 40)
+            dropdownFrame.BackgroundTransparency = 1
+            dropdownFrame.Parent = page.Frame
+
+            local dropdownLabel = Instance.new("TextLabel")
+            dropdownLabel.Text = dropdownText or "Dropdown"
+            dropdownLabel.Size = UDim2.new(0.8, 0, 1, 0)
+            dropdownLabel.BackgroundTransparency = 1
+            dropdownLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            dropdownLabel.Font = Enum.Font.SourceSans
+            dropdownLabel.TextSize = 20
+            dropdownLabel.Parent = dropdownFrame
+
+            local dropdownButton = Instance.new("TextButton")
+            dropdownButton.Text = options[1] or "Option 1"
+            dropdownButton.Size = UDim2.new(0.2, 0, 1, 0)
+            dropdownButton.Position = UDim2.new(0.8, 0, 0, 0)
+            dropdownButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+            dropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            dropdownButton.Font = Enum.Font.SourceSans
+            dropdownButton.TextSize = 20
+            dropdownButton.Parent = dropdownFrame
+
+            local dropdownToggle = false
+            local dropdownOptions = Instance.new("Frame")
+            dropdownOptions.Size = UDim2.new(1, 0, 0, 0)
+            dropdownOptions.Position = UDim2.new(0, 0, 1, 0)
+            dropdownOptions.BackgroundTransparency = 1
+            dropdownOptions.Parent = dropdownFrame
+
+            local dropdownLayout = Instance.new("UIListLayout")
+            dropdownLayout.Parent = dropdownOptions
+
+            for _, option in ipairs(options) do
+                local optionButton = Instance.new("TextButton")
+                optionButton.Text = option
+                optionButton.Size = UDim2.new(1, 0, 0, 30)
+                optionButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+                optionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+                optionButton.Font = Enum.Font.SourceSans
+                optionButton.TextSize = 20
+                optionButton.Parent = dropdownOptions
+
+                optionButton.MouseButton1Click:Connect(function()
+                    dropdownButton.Text = option
+                    dropdownToggle = false
+                    dropdownOptions.Size = UDim2.new(1, 0, 0, 0)
+
+                    if callback then
+                        callback(option)
+                    end
+                end)
+            end
+
+            dropdownButton.MouseButton1Click:Connect(function()
+                dropdownToggle = not dropdownToggle
+                dropdownOptions.Size = dropdownToggle and UDim2.new(1, 0, 0, #options * 30) or UDim2.new(1, 0, 0, 0)
+            end)
+
+            return dropdownFrame
         end
 
         -- Add the page to the library
