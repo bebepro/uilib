@@ -1,3 +1,4 @@
+-- Define the UILibrary
 local UILibrary = {}
 
 -- Create the main UI (ScreenGui)
@@ -207,66 +208,6 @@ function UILibrary.Load(libraryName)
             return sliderFrame
         end
 
-        -- Add a dropdown (with button that shows the options)
-        function page.AddDropdown(dropdownText, options, callback)
-            local dropdownFrame = Instance.new("Frame")
-            dropdownFrame.Size = UDim2.new(1, 0, 0, 30)
-            dropdownFrame.BackgroundTransparency = 1
-            dropdownFrame.Parent = page.Frame
-
-            local dropdownLabel = Instance.new("TextLabel")
-            dropdownLabel.Text = dropdownText or "Dropdown"
-            dropdownLabel.Size = UDim2.new(0.8, 0, 1, 0)
-            dropdownLabel.BackgroundTransparency = 1
-            dropdownLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            dropdownLabel.Font = Enum.Font.SourceSans
-            dropdownLabel.TextSize = 16
-            dropdownLabel.Parent = dropdownFrame
-
-            local dropdownButton = Instance.new("TextButton")
-            dropdownButton.Text = "Select"
-            dropdownButton.Size = UDim2.new(0.2, 0, 1, 0)
-            dropdownButton.Position = UDim2.new(0.8, 0, 0, 0)
-            dropdownButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-            dropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            dropdownButton.Font = Enum.Font.SourceSans
-            dropdownButton.TextSize = 16
-            dropdownButton.Parent = dropdownFrame
-
-            local dropdownOptions = Instance.new("Frame")
-            dropdownOptions.Size = UDim2.new(1, 0, 0, 90)
-            dropdownOptions.Position = UDim2.new(0, 0, 1, 0)
-            dropdownOptions.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-            dropdownOptions.Visible = false
-            dropdownOptions.Parent = dropdownFrame
-
-            -- Populate the dropdown options
-            for i, option in ipairs(options) do
-                local optionButton = Instance.new("TextButton")
-                optionButton.Text = option
-                optionButton.Size = UDim2.new(1, 0, 0, 30)
-                optionButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-                optionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-                optionButton.Font = Enum.Font.SourceSans
-                optionButton.TextSize = 16
-                optionButton.Parent = dropdownOptions
-
-                optionButton.MouseButton1Click:Connect(function()
-                    dropdownButton.Text = option
-                    dropdownOptions.Visible = false
-                    if callback then
-                        callback(option)
-                    end
-                end)
-            end
-
-            dropdownButton.MouseButton1Click:Connect(function()
-                dropdownOptions.Visible = not dropdownOptions.Visible
-            end)
-
-            return dropdownFrame
-        end
-
         -- Add the page to the library
         table.insert(ui.Pages, page)
 
@@ -300,34 +241,3 @@ function UILibrary.Load(libraryName)
 
     return ui
 end
-
--- Usage Example
-local MainUI = UILibrary.Load("ezmade")
-
--- Add a Default Page (where everything is)
-local FirstPage = MainUI.AddPage("Home", true)
-
-FirstPage.AddLabel("Welcome to My UI")
-FirstPage.AddButton("Click Me", function()
-    print("Button clicked!")
-end)
-FirstPage.AddToggle("Enable Feature", true, function(value)
-    print("Toggle Value: " .. tostring(value))
-end)
-FirstPage.AddSlider("Adjust Brightness", {Min = 0, Max = 100, Def = 50}, function(value)
-    print("Slider Value: " .. value)
-end)
-FirstPage.AddDropdown("Select Option", {"Option 1", "Option 2", "Option 3"}, function(selectedOption)
-    print("Dropdown Selected: " .. selectedOption)
-end)
-FirstPage.AddTextBox("Enter your name", function(text)
-    print("Text entered: " .. text)
-end)
-
--- Add Settings Page
-local SecondPage = MainUI.AddPage("Settings")
-SecondPage.AddLabel("Settings Page")
-SecondPage.AddButton("Save Settings", function()
-    print("Settings Saved!")
-end)
-
