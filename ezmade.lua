@@ -214,38 +214,35 @@ function UILibrary.Load(libraryName)
             dropdownButton.TextSize = 16
             dropdownButton.Parent = dropdownFrame
 
-            -- Create dropdown options frame
-            local optionsFrame = Instance.new("Frame")
-            optionsFrame.Size = UDim2.new(1, 0, 0, #options * 30)
-            optionsFrame.Position = UDim2.new(0, 0, 1, 0)
-            optionsFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-            optionsFrame.Visible = false
-            optionsFrame.Parent = dropdownFrame
+            local dropdownOptions = Instance.new("Frame")
+            dropdownOptions.Size = UDim2.new(1, 0, 0, 90)
+            dropdownOptions.Position = UDim2.new(0, 0, 1, 0)
+            dropdownOptions.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            dropdownOptions.Visible = false
+            dropdownOptions.Parent = dropdownFrame
 
-            -- Add options
+            -- Populate the dropdown options
             for i, option in ipairs(options) do
                 local optionButton = Instance.new("TextButton")
                 optionButton.Text = option
                 optionButton.Size = UDim2.new(1, 0, 0, 30)
-                optionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                optionButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
                 optionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
                 optionButton.Font = Enum.Font.SourceSans
                 optionButton.TextSize = 16
-                optionButton.Position = UDim2.new(0, 0, (i-1) * 0.1, 0)
-                optionButton.Parent = optionsFrame
+                optionButton.Parent = dropdownOptions
 
                 optionButton.MouseButton1Click:Connect(function()
                     dropdownButton.Text = option
-                    optionsFrame.Visible = false
+                    dropdownOptions.Visible = false
                     if callback then
                         callback(option)
                     end
                 end)
             end
 
-            -- Show/hide options on button click
             dropdownButton.MouseButton1Click:Connect(function()
-                optionsFrame.Visible = not optionsFrame.Visible
+                dropdownOptions.Visible = not dropdownOptions.Visible
             end)
 
             return dropdownFrame
@@ -253,6 +250,32 @@ function UILibrary.Load(libraryName)
 
         -- Add the page to the library
         table.insert(ui.Pages, page)
+
+        -- Create the tab button on the left
+        local tabButton = Instance.new("TextButton")
+        tabButton.Text = pageName
+        tabButton.Size = UDim2.new(1, 0, 0, 40)
+        tabButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tabButton.Font = Enum.Font.SourceSans
+        tabButton.TextSize = 16
+        tabButton.Parent = ui.TabContainer
+
+        -- Switch to this page when clicked
+        tabButton.MouseButton1Click:Connect(function()
+            if ui.CurrentPage then
+                ui.CurrentPage.Frame.Visible = false
+            end
+            page.Frame.Visible = true
+            ui.CurrentPage = page
+        end)
+
+        -- Set the first page as visible by default
+        if #ui.Pages == 1 then
+            page.Frame.Visible = true
+            ui.CurrentPage = page
+        end
+
         return page
     end
 
