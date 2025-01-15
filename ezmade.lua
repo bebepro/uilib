@@ -15,7 +15,7 @@ function UILibrary.Load(libraryName)
 
     -- Create a frame for the top bar and tab navigation
     ui.TopBar = Instance.new("Frame")
-    ui.TopBar.Size = UDim2.new(1, 0, 0, 50)
+    ui.TopBar.Size = UDim2.new(1, 0, 0, 40)  -- Smaller top bar
     ui.TopBar.Position = UDim2.new(0, 0, 0, 0)
     ui.TopBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     ui.TopBar.BorderSizePixel = 0
@@ -24,19 +24,19 @@ function UILibrary.Load(libraryName)
     -- Add the title to the top bar
     local title = Instance.new("TextLabel")
     title.Text = libraryName or "UILibrary"
-    title.Size = UDim2.new(0.5, 0, 1, 0)
-    title.Position = UDim2.new(0, 0, 0, 0)
+    title.Size = UDim2.new(0.6, 0, 1, 0)  -- Adjusted for smaller title
+    title.Position = UDim2.new(0, 10, 0, 0)
     title.BackgroundTransparency = 1
     title.TextColor3 = Color3.fromRGB(255, 255, 255)
     title.Font = Enum.Font.SourceSans
-    title.TextSize = 30
+    title.TextSize = 20  -- Smaller font size
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = ui.TopBar
 
     -- Create a frame for the tabs on the left
     ui.TabContainer = Instance.new("Frame")
-    ui.TabContainer.Size = UDim2.new(0, 150, 1, 0)
-    ui.TabContainer.Position = UDim2.new(0, 0, 0, 50)
+    ui.TabContainer.Size = UDim2.new(0, 120, 1, 0)  -- Smaller tab container
+    ui.TabContainer.Position = UDim2.new(0, 0, 0, 40)  -- Start below the top bar
     ui.TabContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     ui.TabContainer.BorderSizePixel = 0
     ui.TabContainer.Parent = ui.ScreenGui
@@ -51,8 +51,8 @@ function UILibrary.Load(libraryName)
         -- Create a frame for the page
         page.Frame = Instance.new("Frame")
         page.Frame.Name = pageName or "Page"
-        page.Frame.Size = UDim2.new(1, -150, 1, -50)  -- Adjust size for tab and top bar
-        page.Frame.Position = UDim2.new(0, 150, 0, 50)
+        page.Frame.Size = UDim2.new(1, -120, 1, -40)  -- Adjust size for smaller UI
+        page.Frame.Position = UDim2.new(0, 120, 0, 40)  -- Adjusted for smaller space
         page.Frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         page.Frame.BorderSizePixel = 0
         page.Frame.Visible = #ui.Pages == 0  -- Only the first page is visible by default
@@ -63,7 +63,7 @@ function UILibrary.Load(libraryName)
 
         -- UIListLayout for automatic positioning
         local layout = Instance.new("UIListLayout")
-        layout.Padding = UDim.new(0, 10)
+        layout.Padding = UDim.new(0, 8)  -- Smaller padding between elements
         layout.FillDirection = Enum.FillDirection.Vertical
         layout.SortOrder = Enum.SortOrder.LayoutOrder
         layout.Parent = page.Frame
@@ -72,11 +72,11 @@ function UILibrary.Load(libraryName)
         function page.AddLabel(labelText)
             local label = Instance.new("TextLabel")
             label.Text = labelText or "Label"
-            label.Size = UDim2.new(1, 0, 0, 30)
+            label.Size = UDim2.new(1, 0, 0, 20)  -- Smaller label
             label.BackgroundTransparency = 1
             label.TextColor3 = Color3.fromRGB(255, 255, 255)
             label.Font = Enum.Font.SourceSans
-            label.TextSize = 20
+            label.TextSize = 16  -- Smaller text size
             label.Parent = page.Frame
             return label
         end
@@ -85,11 +85,11 @@ function UILibrary.Load(libraryName)
         function page.AddButton(buttonText, callback)
             local button = Instance.new("TextButton")
             button.Text = buttonText or "Button"
-            button.Size = UDim2.new(1, 0, 0, 40)
+            button.Size = UDim2.new(1, 0, 0, 30)  -- Smaller button
             button.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
             button.TextColor3 = Color3.fromRGB(255, 255, 255)
             button.Font = Enum.Font.SourceSans
-            button.TextSize = 20
+            button.TextSize = 18  -- Smaller text size
             button.Parent = page.Frame
 
             button.MouseButton1Click:Connect(function()
@@ -104,7 +104,7 @@ function UILibrary.Load(libraryName)
         -- Add a toggle
         function page.AddToggle(toggleText, defaultValue, callback)
             local toggleFrame = Instance.new("Frame")
-            toggleFrame.Size = UDim2.new(1, 0, 0, 40)
+            toggleFrame.Size = UDim2.new(1, 0, 0, 30)  -- Smaller toggle container
             toggleFrame.BackgroundTransparency = 1
             toggleFrame.Parent = page.Frame
 
@@ -114,7 +114,7 @@ function UILibrary.Load(libraryName)
             toggleLabel.BackgroundTransparency = 1
             toggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
             toggleLabel.Font = Enum.Font.SourceSans
-            toggleLabel.TextSize = 20
+            toggleLabel.TextSize = 16  -- Smaller text size
             toggleLabel.Parent = toggleFrame
 
             local toggleButton = Instance.new("TextButton")
@@ -124,7 +124,7 @@ function UILibrary.Load(libraryName)
             toggleButton.BackgroundColor3 = defaultValue and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
             toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
             toggleButton.Font = Enum.Font.SourceSans
-            toggleButton.TextSize = 20
+            toggleButton.TextSize = 16  -- Smaller text size
             toggleButton.Parent = toggleFrame
 
             local toggleValue = defaultValue
@@ -145,7 +145,7 @@ function UILibrary.Load(libraryName)
         -- Add a slider
         function page.AddSlider(sliderText, options, callback)
             local sliderFrame = Instance.new("Frame")
-            sliderFrame.Size = UDim2.new(1, 0, 0, 40)
+            sliderFrame.Size = UDim2.new(1, 0, 0, 30)  -- Smaller slider container
             sliderFrame.BackgroundTransparency = 1
             sliderFrame.Parent = page.Frame
 
@@ -155,7 +155,7 @@ function UILibrary.Load(libraryName)
             sliderLabel.BackgroundTransparency = 1
             sliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
             sliderLabel.Font = Enum.Font.SourceSans
-            sliderLabel.TextSize = 20
+            sliderLabel.TextSize = 16  -- Smaller text size
             sliderLabel.Parent = sliderFrame
 
             local slider = Instance.new("TextButton")
@@ -165,7 +165,7 @@ function UILibrary.Load(libraryName)
             slider.Text = tostring(options.Def or 0)
             slider.TextColor3 = Color3.fromRGB(255, 255, 255)
             slider.Font = Enum.Font.SourceSans
-            slider.TextSize = 20
+            slider.TextSize = 16  -- Smaller text size
             slider.Parent = sliderFrame
 
             slider.MouseButton1Click:Connect(function()
@@ -180,55 +180,17 @@ function UILibrary.Load(libraryName)
             return sliderFrame
         end
 
-        -- Add a dropdown
-        function page.AddDropdown(dropdownText, options, callback)
-            local dropdownFrame = Instance.new("Frame")
-            dropdownFrame.Size = UDim2.new(1, 0, 0, 40)
-            dropdownFrame.BackgroundTransparency = 1
-            dropdownFrame.Parent = page.Frame
-
-            local dropdownLabel = Instance.new("TextLabel")
-            dropdownLabel.Text = dropdownText or "Dropdown"
-            dropdownLabel.Size = UDim2.new(0.8, 0, 1, 0)
-            dropdownLabel.BackgroundTransparency = 1
-            dropdownLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            dropdownLabel.Font = Enum.Font.SourceSans
-            dropdownLabel.TextSize = 20
-            dropdownLabel.Parent = dropdownFrame
-
-            local dropdownButton = Instance.new("TextButton")
-            dropdownButton.Text = "Select"
-            dropdownButton.Size = UDim2.new(0.2, 0, 1, 0)
-            dropdownButton.Position = UDim2.new(0.8, 0, 0, 0)
-            dropdownButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-            dropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            dropdownButton.Font = Enum.Font.SourceSans
-            dropdownButton.TextSize = 20
-            dropdownButton.Parent = dropdownFrame
-
-            dropdownButton.MouseButton1Click:Connect(function()
-                local selectedOption = options[math.random(1, #options)]
-                dropdownButton.Text = selectedOption
-
-                if callback then
-                    callback(selectedOption)
-                end
-            end)
-
-            return dropdownFrame
-        end
-
         -- Add the page to the library
         table.insert(ui.Pages, page)
 
         -- Create a tab button for the page
         local tabButton = Instance.new("TextButton")
         tabButton.Text = pageName or "Page"
-        tabButton.Size = UDim2.new(1, 0, 0, 50)
+        tabButton.Size = UDim2.new(1, 0, 0, 40)  -- Smaller tab buttons
         tabButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
         tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         tabButton.Font = Enum.Font.SourceSans
-        tabButton.TextSize = 20
+        tabButton.TextSize = 16  -- Smaller font size
         tabButton.Parent = ui.TabContainer
 
         -- Handle tab button click
