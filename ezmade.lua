@@ -17,7 +17,7 @@ function UILibrary.Load(libraryName)
     ui.MainFrame = Instance.new("Frame")
     ui.MainFrame.Size = UDim2.new(0, 980, 0, 709)  -- Set the new size here
     ui.MainFrame.Position = UDim2.new(0.5, -490, 0.5, -354)  -- Center the UI
-    ui.MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    ui.MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
     ui.MainFrame.BorderSizePixel = 0
     ui.MainFrame.Parent = ui.ScreenGui
 
@@ -109,7 +109,7 @@ function UILibrary.Load(libraryName)
             return button
         end
 
-        -- Add a toggle
+        -- Add a toggle (modified)
         function page.AddToggle(toggleText, defaultValue, callback)
             local toggleFrame = Instance.new("Frame")
             toggleFrame.Size = UDim2.new(1, 0, 0, 30)
@@ -150,7 +150,7 @@ function UILibrary.Load(libraryName)
             return toggleFrame
         end
 
-        -- Add a slider
+        -- Add a slider (modified)
         function page.AddSlider(sliderText, options, callback)
             local sliderFrame = Instance.new("Frame")
             sliderFrame.Size = UDim2.new(1, 0, 0, 30)
@@ -188,21 +188,61 @@ function UILibrary.Load(libraryName)
             return sliderFrame
         end
 
-        -- Add the page to the library
-        table.insert(ui.Pages, page)
+        -- Add a dropdown (modified)
+        function page.AddDropdown(dropdownText, options, callback)
+            local dropdownFrame = Instance.new("Frame")
+            dropdownFrame.Size = UDim2.new(1, 0, 0, 30)
+            dropdownFrame.BackgroundTransparency = 1
+            dropdownFrame.Parent = page.Frame
 
-        -- Create the tab button on the left
-        local tabButton = Instance.new("TextButton")
-        tabButton.Text = pageName
-        tabButton.Size = UDim2.new(1, 0, 0, 40)
-        tabButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-        tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        tabButton.Font = Enum.Font.SourceSans
-        tabButton.TextSize = 16
-        tabButton.Parent = ui.TabContainer
+            local dropdownLabel = Instance.new("TextLabel")
+            dropdownLabel.Text = dropdownText or "Dropdown"
+            dropdownLabel.Size = UDim2.new(0.8, 0, 1, 0)
+            dropdownLabel.BackgroundTransparency = 1
+            dropdownLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            dropdownLabel.Font = Enum.Font.SourceSans
+            dropdownLabel.TextSize = 16
+            dropdownLabel.Parent = dropdownFrame
 
-        -- Switch to this page when clicked
-        tabButton.MouseButton1Click:Connect(function()
+            local dropdownButton = Instance.new("TextButton")
+            dropdownButton.Text = "Select"
+            dropdownButton.Size = UDim2.new(0.2, 0, 1, 0)
+            dropdownButton.Position = UDim2.new(0.8, 0, 0, 0)
+            dropdownButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+            dropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            dropdownButton.Font = Enum.Font.SourceSans
+            dropdownButton.TextSize = 16
+            dropdownButton.Parent = dropdownFrame
+
+            dropdownButton.MouseButton1Click:Connect(function()
+                local selected = options[math.random(1, #options)]
+                dropdownButton.Text = selected
+
+                if callback then
+                    callback(selected)
+                end
+            end)
+
+            return dropdownFrame
+        end
+
+        -- Store the page
+        ui.Pages[pageName] = page
+        return page
+    end
+
+    -- Add a tab to the container
+    function ui.AddTab(tabName, page)
+        local button = Instance.new("TextButton")
+        button.Text = tabName
+        button.Size = UDim2.new(1, 0, 0, 40)
+        button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        button.Font = Enum.Font.SourceSans
+        button.TextSize = 18
+        button.Parent = ui.TabContainer
+
+        button.MouseButton1Click:Connect(function()
             if ui.CurrentPage then
                 ui.CurrentPage.Frame.Visible = false
             end
@@ -210,13 +250,7 @@ function UILibrary.Load(libraryName)
             ui.CurrentPage = page
         end)
 
-        -- Set the first page as visible by default
-        if #ui.Pages == 1 then
-            page.Frame.Visible = true
-            ui.CurrentPage = page
-        end
-
-        return page
+        table.insert(ui.TabButtons, button)
     end
 
     return ui
