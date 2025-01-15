@@ -20,8 +20,6 @@ function UILibrary.Load(libraryName)
     ui.MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     ui.MainFrame.BorderSizePixel = 0
     ui.MainFrame.Parent = ui.ScreenGui
-    ui.MainFrame.Active = true
-    ui.MainFrame.Draggable = true
 
     -- Store the tabs and top bar
     ui.TopBar = Instance.new("Frame")
@@ -248,42 +246,6 @@ function UILibrary.Load(libraryName)
             end)
 
             return dropdownFrame
-        end
-
-        -- Add a textbox
-        function page.AddTextBox(placeholderText, callback)
-            local textBoxFrame = Instance.new("Frame")
-            textBoxFrame.Size = UDim2.new(1, 0, 0, 30)
-            textBoxFrame.BackgroundTransparency = 1
-            textBoxFrame.Parent = page.Frame
-
-            local textBoxLabel = Instance.new("TextLabel")
-            textBoxLabel.Text = placeholderText or "Enter Text"
-            textBoxLabel.Size = UDim2.new(0.8, 0, 1, 0)
-            textBoxLabel.BackgroundTransparency = 1
-            textBoxLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            textBoxLabel.Font = Enum.Font.SourceSans
-            textBoxLabel.TextSize = 16
-            textBoxLabel.Parent = textBoxFrame
-
-            local textBox = Instance.new("TextBox")
-            textBox.Size = UDim2.new(0.2, 0, 1, 0)
-            textBox.Position = UDim2.new(0.8, 0, 0, 0)
-            textBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-            textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-            textBox.Font = Enum.Font.SourceSans
-            textBox.TextSize = 16
-            textBox.ClearTextOnFocus = true
-            textBox.PlaceholderText = "Type here..."
-            textBox.Parent = textBoxFrame
-
-            textBox.FocusLost:Connect(function()
-                if callback then
-                    callback(textBox.Text)
-                end
-            end)
-
-            return textBoxFrame
         end
 
         -- Add the page to the library
