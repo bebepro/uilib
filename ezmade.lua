@@ -52,8 +52,27 @@ function UILibrary.Load(libraryName)
     -- Store tab buttons
     ui.TabButtons = {}
 
+    -- Make the UI movable
+    local dragInput, dragStart, startPos
+    local function update(input)
+        local delta = input.Position - dragStart
+        ui.MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+
+    local function onInputBegan(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragStart = input.Position
+            startPos = ui.MainFrame.Position
+            input.Changed:Connect(function()
+                update(input)
+            end)
+        end
+    end
+
+    ui.TopBar.InputBegan:Connect(onInputBegan)
+
     -- Add a page
-    function ui.AddPage(pageName)
+    function ui.AddPage(pageName, isDefault)
         local page = {}
 
         -- Create a frame for the page
@@ -63,7 +82,7 @@ function UILibrary.Load(libraryName)
         page.Frame.Position = UDim2.new(0, 120, 0, 40)
         page.Frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         page.Frame.BorderSizePixel = 0
-        page.Frame.Visible = #ui.Pages == 0
+        page.Frame.Visible = false
         page.Frame.Parent = ui.MainFrame
 
         -- Store elements in the page
@@ -248,42 +267,6 @@ function UILibrary.Load(libraryName)
             return dropdownFrame
         end
 
-        -- Add a textbox
-        function page.AddTextBox(placeholderText, callback)
-            local textBoxFrame = Instance.new("Frame")
-            textBoxFrame.Size = UDim2.new(1, 0, 0, 30)
-            textBoxFrame.BackgroundTransparency = 1
-            textBoxFrame.Parent = page.Frame
-
-            local textBoxLabel = Instance.new("TextLabel")
-            textBoxLabel.Text = placeholderText or "Enter Text"
-            textBoxLabel.Size = UDim2.new(0.8, 0, 1, 0)
-            textBoxLabel.BackgroundTransparency = 1
-            textBoxLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            textBoxLabel.Font = Enum.Font.SourceSans
-            textBoxLabel.TextSize = 16
-            textBoxLabel.Parent = textBoxFrame
-
-            local textBox = Instance.new("TextBox")
-            textBox.Size = UDim2.new(0.2, 0, 1, 0)
-            textBox.Position = UDim2.new(0.8, 0, 0, 0)
-            textBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-            textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-            textBox.Font = Enum.Font.SourceSans
-            textBox.TextSize = 16
-            textBox.ClearTextOnFocus = true
-            textBox.PlaceholderText = "Type here..."
-            textBox.Parent = textBoxFrame
-
-            textBox.FocusLost:Connect(function()
-                if callback then
-                    callback(textBox.Text)
-                end
-            end)
-
-            return textBoxFrame
-        end
-
         -- Add the page to the library
         table.insert(ui.Pages, page)
 
@@ -306,8 +289,8 @@ function UILibrary.Load(libraryName)
             ui.CurrentPage = page
         end)
 
-        -- Set the first page as visible by default
-        if #ui.Pages == 1 then
+        -- If this is the default page, make it visible
+        if isDefault then
             page.Frame.Visible = true
             ui.CurrentPage = page
         end
@@ -318,4 +301,33 @@ function UILibrary.Load(libraryName)
     return ui
 end
 
-return UILibrary
+-- Usage Example
+local MainUI = UILibrary.Load("ezmade")
+
+-- Add a Default Page (where everything is)
+local FirstPage = MainUI.AddPage("Home", true)
+
+FirstPage.AddLabel("Welcome to My UI")
+FirstPage.AddButton("Click Me", function()
+    print("Button clicked!")
+end)
+FirstPage.AddToggle("Enable Feature", true, function(value)
+    print("Toggle Value: " .. tostring(value))
+end)
+FirstPage.AddSlider("Adjust Brightness", {Min = 0, Max = 100, Def = 50}, function(value)
+    print("Slider Value: " .. value)
+end)
+FirstPage.AddDropdown("Select Option", {"Option 1", "Option 2", "Option 3"}, function(selectedOption)
+    print("Dropdown Selected: " .. selectedOption)
+end)
+FirstPage.AddTextBox("Enter your name", function(text)
+    print("Text entered: " .. text)
+end)
+
+-- Add Settings Page
+local SecondPage = MainUI.AddPage("Settings")
+SecondPage.AddLabel("Settings Page")
+SecondPage.AddButton("Save Settings", function()
+    print("Settings Saved!")
+end)
+
