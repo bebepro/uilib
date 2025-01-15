@@ -1,4 +1,3 @@
--- Define the UILibrary
 local UILibrary = {}
 
 -- Create the main UI (ScreenGui)
@@ -21,6 +20,8 @@ function UILibrary.Load(libraryName)
     ui.MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     ui.MainFrame.BorderSizePixel = 0
     ui.MainFrame.Parent = ui.ScreenGui
+    ui.MainFrame.Active = true
+    ui.MainFrame.Draggable = true
 
     -- Store the tabs and top bar
     ui.TopBar = Instance.new("Frame")
@@ -53,27 +54,8 @@ function UILibrary.Load(libraryName)
     -- Store tab buttons
     ui.TabButtons = {}
 
-    -- Make the UI movable
-    local dragInput, dragStart, startPos
-    local function update(input)
-        local delta = input.Position - dragStart
-        ui.MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-
-    local function onInputBegan(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragStart = input.Position
-            startPos = ui.MainFrame.Position
-            input.Changed:Connect(function()
-                update(input)
-            end)
-        end
-    end
-
-    ui.TopBar.InputBegan:Connect(onInputBegan)
-
     -- Add a page
-    function ui.AddPage(pageName, isDefault)
+    function ui.AddPage(pageName)
         local page = {}
 
         -- Create a frame for the page
@@ -83,7 +65,7 @@ function UILibrary.Load(libraryName)
         page.Frame.Position = UDim2.new(0, 120, 0, 40)
         page.Frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         page.Frame.BorderSizePixel = 0
-        page.Frame.Visible = false
+        page.Frame.Visible = #ui.Pages == 0
         page.Frame.Parent = ui.MainFrame
 
         -- Store elements in the page
@@ -208,6 +190,102 @@ function UILibrary.Load(libraryName)
             return sliderFrame
         end
 
+        -- Add a dropdown (with button that shows the options)
+        function page.AddDropdown(dropdownText, options, callback)
+            local dropdownFrame = Instance.new("Frame")
+            dropdownFrame.Size = UDim2.new(1, 0, 0, 30)
+            dropdownFrame.BackgroundTransparency = 1
+            dropdownFrame.Parent = page.Frame
+
+            local dropdownLabel = Instance.new("TextLabel")
+            dropdownLabel.Text = dropdownText or "Dropdown"
+            dropdownLabel.Size = UDim2.new(0.8, 0, 1, 0)
+            dropdownLabel.BackgroundTransparency = 1
+            dropdownLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            dropdownLabel.Font = Enum.Font.SourceSans
+            dropdownLabel.TextSize = 16
+            dropdownLabel.Parent = dropdownFrame
+
+            local dropdownButton = Instance.new("TextButton")
+            dropdownButton.Text = "Select"
+            dropdownButton.Size = UDim2.new(0.2, 0, 1, 0)
+            dropdownButton.Position = UDim2.new(0.8, 0, 0, 0)
+            dropdownButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+            dropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            dropdownButton.Font = Enum.Font.SourceSans
+            dropdownButton.TextSize = 16
+            dropdownButton.Parent = dropdownFrame
+
+            local dropdownOptions = Instance.new("Frame")
+            dropdownOptions.Size = UDim2.new(1, 0, 0, 90)
+            dropdownOptions.Position = UDim2.new(0, 0, 1, 0)
+            dropdownOptions.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            dropdownOptions.Visible = false
+            dropdownOptions.Parent = dropdownFrame
+
+            -- Populate the dropdown options
+            for i, option in ipairs(options) do
+                local optionButton = Instance.new("TextButton")
+                optionButton.Text = option
+                optionButton.Size = UDim2.new(1, 0, 0, 30)
+                optionButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+                optionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+                optionButton.Font = Enum.Font.SourceSans
+                optionButton.TextSize = 16
+                optionButton.Parent = dropdownOptions
+
+                optionButton.MouseButton1Click:Connect(function()
+                    dropdownButton.Text = option
+                    dropdownOptions.Visible = false
+                    if callback then
+                        callback(option)
+                    end
+                end)
+            end
+
+            dropdownButton.MouseButton1Click:Connect(function()
+                dropdownOptions.Visible = not dropdownOptions.Visible
+            end)
+
+            return dropdownFrame
+        end
+
+        -- Add a textbox
+        function page.AddTextBox(placeholderText, callback)
+            local textBoxFrame = Instance.new("Frame")
+            textBoxFrame.Size = UDim2.new(1, 0, 0, 30)
+            textBoxFrame.BackgroundTransparency = 1
+            textBoxFrame.Parent = page.Frame
+
+            local textBoxLabel = Instance.new("TextLabel")
+            textBoxLabel.Text = placeholderText or "Enter Text"
+            textBoxLabel.Size = UDim2.new(0.8, 0, 1, 0)
+            textBoxLabel.BackgroundTransparency = 1
+            textBoxLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            textBoxLabel.Font = Enum.Font.SourceSans
+            textBoxLabel.TextSize = 16
+            textBoxLabel.Parent = textBoxFrame
+
+            local textBox = Instance.new("TextBox")
+            textBox.Size = UDim2.new(0.2, 0, 1, 0)
+            textBox.Position = UDim2.new(0.8, 0, 0, 0)
+            textBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+            textBox.Font = Enum.Font.SourceSans
+            textBox.TextSize = 16
+            textBox.ClearTextOnFocus = true
+            textBox.PlaceholderText = "Type here..."
+            textBox.Parent = textBoxFrame
+
+            textBox.FocusLost:Connect(function()
+                if callback then
+                    callback(textBox.Text)
+                end
+            end)
+
+            return textBoxFrame
+        end
+
         -- Add the page to the library
         table.insert(ui.Pages, page)
 
@@ -230,8 +308,8 @@ function UILibrary.Load(libraryName)
             ui.CurrentPage = page
         end)
 
-        -- If this is the default page, make it visible
-        if isDefault then
+        -- Set the first page as visible by default
+        if #ui.Pages == 1 then
             page.Frame.Visible = true
             ui.CurrentPage = page
         end
@@ -241,3 +319,5 @@ function UILibrary.Load(libraryName)
 
     return ui
 end
+
+return UILibrary
